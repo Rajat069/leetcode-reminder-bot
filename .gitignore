@@ -1,0 +1,13 @@
+.env
+.zip
+users.json
+__pycache__/
+*.pyc
+.vscode/
+.env.local
+.env.*.local
+.DS_Store
+.idea/
+*.iml
+logs/
+*.log
