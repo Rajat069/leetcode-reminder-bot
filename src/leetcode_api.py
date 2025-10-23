@@ -9,11 +9,13 @@ def get_daily_question():
             json={'query': config.QUERY_DAILY_QUESTION}
         )
         response.raise_for_status()
-        q = response.json()["data"]["activeDailyCodingChallengeQuestion"]
-        return q["question"]["title"], "https://leetcode.com" + q["link"]
+        q_data = response.json()["data"]["activeDailyCodingChallengeQuestion"]
+        q_data['fullLink'] = "https://leetcode.com" + q_data['link']
+        return q_data
+
     except Exception as e:
         print(f"\n Error fetching daily question: {e}")
-        return None, None
+        return None
 
 def get_recent_submissions(username):
     """Fetches the 50 most recent accepted submissions for a user"""

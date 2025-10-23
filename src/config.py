@@ -15,15 +15,7 @@ SMTP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
 LEETCODE_API_URL = os.getenv("LEETCODE_API_URL", "https://leetcode.com/graphql")
-
-# --- Static Config (App-level constants) ---
-QUOTES = [
-    "Keep pushing! You’re closer than you think 💪",
-    "Consistency beats motivation every time ⚡",
-    "Another problem solved — another step ahead 🚀",
-    "Your hard work today is your success tomorrow 💫",
-    "One problem a day keeps the bugs away 🧠"
-]
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # --- GraphQL Queries ---
 QUERY_DAILY_QUESTION = """
@@ -36,6 +28,7 @@ query questionOfToday {
       titleSlug
       difficulty
       hints
+      acRate
       topicTags{
         name
       }

@@ -77,7 +77,7 @@ def main():
     except KeyboardInterrupt:
         print("\n")
         rprint(Panel.fit(
-            "[bold yellow]Shutting down the bot[/bold yellow]\n",
+            "[bold yellow]Shutting down the bot[/bold yellow]\nSending mail to admin",
             title=" Goodbye! :(",
             border_style="cyan",
             padding=(1, 4)
