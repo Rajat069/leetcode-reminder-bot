@@ -1,0 +1,7 @@
+pycache
+.git
+.gitignore
+.env
+venv/
+Dockerfile
+.github/
