@@ -9,7 +9,7 @@
 
 ### About
 
-**LeetCode AI Coach Bot** is a smart, containerized reminder and coaching bot that **keeps you consistent** with your daily LeetCode practice — and gives you **AI-powered hints** when you need them most!
+**LeetCode Reminder Bot** is a smart, containerized reminder bot that **keeps you consistent** with your daily LeetCode practice — and gives you **AI-powered hints** when you need them most!
 
 It checks whether users have solved the **Problem of the Day**, then:
 - Sends a **Reminder Email** (with AI hints + motivational quotes) if unsolved.
@@ -21,27 +21,18 @@ It checks whether users have solved the **Problem of the Day**, then:
 
 ## Key Features
 
-### 💡 Smart Email Logic
+### Smart Email Logic
 - Sends **“Congratulations”** or **“Reminder”** emails automatically.
 - Dynamic templates keep every message engaging.
 
-###  AI-Powered Coaching (Gemini)
+### AI-Powered (Gemini)
 - **Adaptive Hints:** Number of hints varies by difficulty and acceptance rate.  
 - **Helpful Hints:** Uses official problem data to generate intuitive AI hints.  
 - **Motivational Quotes:** Fetches inspiring movie quotes to boost motivation.
 
-### 🐳 Fully Containerized
+### Fully Containerized
 - Runs as a **single lightweight Docker container**.  
 - Supports both **amd64** and **arm64** architectures (Intel/AMD + Apple/Raspberry Pi).
-
-### ⚙️ CI/CD Pipeline
-- Automatically builds and pushes Docker images to GHCR.  
-- Triggers on every `git push` to `main`.
-
-### 🧱 Clean & Modular Code
-- Organized by logical services: `api/`, `email/`, `config/`, and `core/`.  
-- Built for scalability and easy maintenance.
-
 ---
 
 ## 🖼️ Gallery
@@ -73,18 +64,11 @@ It checks whether users have solved the **Problem of the Day**, then:
                                           - Sends email via SMTP
                                           - Uses Gemini AI for hints
 ```
-## ⚡ Deployment (Production)
-
-This bot is designed to run **24/7** on a server or VM using Docker.
-
----
-
 ### Prerequisites
 
 - A VM/server with **Docker installed**
 - A **GitHub Personal Access Token (PAT)** with `read:packages` scope
-- **GMAIL_APP_PASSWORD**
-- **GEMINI_API_KEY**
+- **GMAIL_APP_PASSWORD** & **GEMINI_API_KEY**
 
 ---
 ### Step 1: Log in to GHCR
@@ -94,11 +78,11 @@ sudo docker login ghcr.io -u YOUR_USERNAME -p YOUR_PAT
 ``` 
 ### Step 2: Create Configuration Files
 ```bash
+
 /home/{vm-username}/leetcode.env
 ```
 > Note: Replace {vm-username} with your actual VM's username.
 
-Your environment variables — no quotes needed.
 ```
 GMAIL_APP_PASSWORD=YOUR_GMAIL_APP_PASSWORD_HERE
 SMTP_USER={your-mail}@gmail.com
@@ -106,6 +90,7 @@ GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
 /home/{vm-username}/users.json
 ```
 >Note: Replace {your-mail} with your actual e-mail.
+>environment variables should not have any quotes `""`.
 
 Your user list in JSON format.
 ```json
@@ -134,37 +119,30 @@ sudo docker run \
 ```
 > Note: Replace {vm-username} and github-username} with your actual details.
 
-🪵 Check logs anytime:
+Check logs anytime:
+
 ```bash
 sudo docker logs -f leetcode-bot
 ```
 ## Local Development
 
-1️⃣ Clone the Repository
-```bash
-git clone https://github.com/rajat069/leetcode-reminder-bot.git
-cd leetcode-reminder-bot
-```
-2️⃣ Create a .env File
-```bash
-GMAIL_APP_PASSWORD=YOUR_GMAIL_APP_PASSWORD_HERE
-SMTP_USER={your-mail}@gmail.com
-GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
-```
-3️⃣ Create a users.json File
-```json
-[
-  { "username": "pam", "email": "pam01@gmail.com" }
-]
-```
-4️⃣ Install Dependencies
+1. Clone the Repository
+2. Create a .env File with all variables mentioned above
+3. Create a users.json File
+4. Install Dependencies using following command
 ``` bash
 pip install -r requirements.txt
 ```
-5️⃣ Run Locally
+5. Run Locally
 ``` bash
 python main.py
 ```
+
+## To Dos
+- [x] Add gemini-service   
+- [ ] Implement caching for static operations 
+- [ ] Enhance email UI
+
 ## Configuration Reference
 
 | Variable | Description | Required | Default |
