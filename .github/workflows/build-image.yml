@@ -43,5 +43,5 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ env.repo }}:latest
-            ghc.io/${{ env.repo }}:${{ github.sha }}
+            ghcr.io/${{ env.repo }}:${{ github.sha }}
 
