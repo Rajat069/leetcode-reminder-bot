@@ -8,7 +8,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 
 COPY main.py .
-COPY users.json .
 COPY src/ /app/src/
 
 
