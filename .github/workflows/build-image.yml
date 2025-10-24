@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest # Use a standard GitHub-hosted runner
+    runs-on: ubuntu-latest 
     permissions:
       contents: read
       packages: write # Give the job permission to write to GHCR
@@ -31,5 +31,5 @@ jobs:
           file: ./Dockerfile
           push: true # Push the image after building
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/${{ toLower(github.repository) }}:latest
+            ghcr.io/${{ toLower(github.repository) }}:${{ github.sha }}
