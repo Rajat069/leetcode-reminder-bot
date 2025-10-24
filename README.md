@@ -174,3 +174,6 @@ python main.py
 | `GEMINI_API_KEY` | API key from Google AI Studio | ✅ Yes | — |
 | `SMTP_SERVER` | SMTP server hostname | ❌ No | `smtp.gmail.com` |
 | `SMTP_PORT` | SMTP port number | ❌ No | `587` |
+
+## License
+This project is licensed under the MIT License. See the `LICENSE` file for details.
