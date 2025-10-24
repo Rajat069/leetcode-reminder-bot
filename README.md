@@ -46,24 +46,8 @@ It checks whether users have solved the **Problem of the Day**, then:
 ## 🏗️ Architecture Overview
 
 **“Set it and forget it” — built for autonomous operation.**
+![My Project Logo](assets/hld-diagram.png)
 
-```text
-┌─────────────┐        ┌──────────────┐        ┌────────────┐
-│  Git Push   │ ─────▶ │ GitHub Action│ ─────▶ │ GHCR Image │
-└─────────────┘        └──────────────┘        └────────────┘
-                                                     │
-                                                     ▼
-                                              ┌──────────────┐
-                                              │   Your VM     │
-                                              │ (Docker Run)  │
-                                              └──────────────┘
-                                                     │
-                                                     ▼
-                                        Python bot runs every few hours
-                                          - Checks user activity
-                                          - Sends email via SMTP
-                                          - Uses Gemini AI for hints
-```
 ### Prerequisites
 
 - A VM/server with **Docker installed**
