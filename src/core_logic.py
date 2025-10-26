@@ -46,13 +46,14 @@ def run_check():
         return
 
      # Get one AI quote for everyone for this run
-    with Halo(text='Fetching quote from gemini...', spinner='earth', color='cyan') as spinner:
+    with Halo(text='Fetching quote from gemini...', spinner='balloon2', color='cyan') as spinner:
         try:
             ai_quote = gemini_service.get_motivational_quote()
             spinner.succeed('Quote fetched successfully!')
         except Exception as e:
             spinner.fail(f'Failed to get motivational quote: {e}')   
-   
+
+    ai_hints = [] 
   
     for user in users:
         username, email = user["username"], user["email"]
@@ -68,7 +69,6 @@ def run_check():
             for sub in submissions
         )
 
-        ai_hints = []
 
         if solved_today:
             print(f"[ {username} ] has already solved the daily problem.")
@@ -77,15 +77,20 @@ def run_check():
             print(f" [ {username} ] has not solved the daily problem yet sending reminder...")
             subject = f"⏳ Reminder: Solve Today’s LeetCode Problem!"
 
-            hint_count = get_hint_count(q_details['difficulty'], q_details['acRate'])
-            print(f"Difficulty: {q_details['difficulty']}, AC Rate: {format(float(q_details['acRate']), '.2f')}% -> Generating {hint_count} hints.")
-           
-            with Halo(text='Calling Gemini...', spinner='arrow3', color='blue') as spinner:
-                ai_hints = gemini_service.generate_optimal_hints(q_details, hint_count)
-            spinner.succeed('Hints generated successfully!')
             
+            print(f"Difficulty: {q_details['difficulty']}, AC Rate: {format(float(q_details['acRate']), '.2f')}% ")
 
-        #  Send email
+            if len(ai_hints) == 0:
+                    hint_count = get_hint_count(q_details['difficulty'], q_details['acRate'])
+                    with Halo(text='Generating Hints...', spinner='arrow3', color='blue') as spinner:
+                        try:
+                            ai_hints = gemini_service.generate_optimal_hints(q_details, hint_count)
+                            spinner.succeed('Hints generated successfully!')
+                        except Exception as e:
+                            spinner.fail(f'Failed to generate hints: {e}')
+                            ai_hints = gemini_service.DEFAULT_HINTS    
+            
+        
         html = email_service.build_html_email(
             username=username,
             title=q_details['title'],
