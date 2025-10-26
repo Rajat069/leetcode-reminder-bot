@@ -1,11 +1,10 @@
 import requests
 import json
-import random
 from . import config
 import time
 
 # --- Default Fallbacks ---
-DEFAULT_QUOTE = "Keep pushing! You’re closer than you think. 💪"
+DEFAULT_QUOTE = "Keep pushing! You’re closer than you think."
 DEFAULT_HINTS = ["Try to break the problem down into smaller pieces.", "Think about the data structures that might be useful here."]
 
 def call_gemini_api(prompt_text, expect_json=False):
