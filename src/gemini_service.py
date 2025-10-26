@@ -52,7 +52,7 @@ def call_gemini_api(prompt_text, expect_json=False):
         print(f" Error calling Gemini API: {e}")
         return None
     except (KeyError, IndexError):
-        print(f" Error parsing Gemini response: {result}")
+        print(" Error parsing Gemini response: Malformed or unexpected structure.")
         return None
 
 def get_motivational_quote():
