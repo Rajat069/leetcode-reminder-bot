@@ -1,17 +1,19 @@
-# It automatically builds your Docker image and pushes it to GHCR
-name: Build and Push Docker Image
 
-# We will run this workflow every time you push to the 'main' branch
+name: Build and Deploy Bot
+
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest 
+  # ----------------------------------
+  # JOB 1: BUILD THE DOCKER IMAGE
+  # ----------------------------------
+  build:
+    runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # Give the job permission to write to GHCR
+      packages: write
 
     steps:
       - name: Checkout repository
@@ -30,7 +32,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step to generate lowercase repository name
       - name: Set lowercase repository name
         run: echo "repo=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
@@ -39,9 +40,53 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          platforms: linux/amd64,linux/arm64 # Build for multiple architectures
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ghcr.io/${{ env.repo }}:latest
             ghcr.io/${{ env.repo }}:${{ github.sha }}
+
+  # ----------------------------------
+  # JOB 2: DEPLOY THE IMAGE TO THE VM
+  # ----------------------------------
+  deploy:
+    needs: build 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v1.0.3 
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            echo "--- Starting deployment ---"
+            
+            # Log in to GHCR (uses the GH_PAT secret)
+            echo "${{ secrets.GH_PAT }}" | sudo docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin
+            
+            # Pull the new image (the one 'build' just created)
+            sudo docker pull ghcr.io/rajat069/leetcode-reminder-bot:latest
+            
+            # Stop and remove the old container
+            # '|| true' means "don't fail if the container doesn't exist"
+            sudo docker stop leetcode-bot || true
+            sudo docker rm leetcode-bot || true
+            
+            # Run the new container with all your flags
+            sudo docker run \
+                --detach \
+                --restart=always \
+                --name leetcode-bot \
+                --dns=8.8.8.8 \
+                --env-file /home/admin-rj/leetcode-env.env \
+                -v /home/admin-rj/users.json:/app/users.json \
+                ghcr.io/rajat069/leetcode-reminder-bot:latest
+            
+            # Clean up old, unused images
+            sudo docker image prune -f
+            
+            echo "--- Deployment successful! ---"
 

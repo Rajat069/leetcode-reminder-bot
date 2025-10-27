@@ -115,7 +115,7 @@ def generate_optimal_hints(question, hint_count):
             else:
                 print(" Gemini did not return a valid list of hints.")
         except json.JSONDecodeError:
-            print(f" Failed to decode Gemini's JSON hint response: {response_text}")
+            print(" Failed to decode Gemini's JSON hint response.")
     
     # Fallback if anything fails
     return DEFAULT_HINTS[:hint_count]
