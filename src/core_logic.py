@@ -72,10 +72,10 @@ def run_check():
 
         if solved_today:
             print(f"[ {username} ] has already solved the daily problem.")
-            subject = f"Awesome! You solved today’s LeetCode challenge!"
+            subject = "Awesome! You solved today’s LeetCode challenge!"
         else:
             print(f" [ {username} ] has not solved the daily problem yet sending reminder...")
-            subject = f"⏳ Reminder: Solve Today’s LeetCode Problem!"
+            subject = "⏳ Reminder: Solve Today’s LeetCode Problem!"
 
             
             print(f"Difficulty: {q_details['difficulty']}, AC Rate: {format(float(q_details['acRate']), '.2f')}% ")
@@ -94,10 +94,11 @@ def run_check():
         html = email_service.build_html_email(
             username=username,
             title=q_details['title'],
+            difficulty=q_details['difficulty'], 
             link=q_link,
             solved=solved_today,
             quote=ai_quote,
-            hints=ai_hints 
+            hints=ai_hints,
         )
         
         with Halo(text='Sending mail..', spinner='bouncingBar', color='yellow') as spinner:

@@ -33,7 +33,7 @@ def send_email(to_email, subject, html_content):
         return False
 
 
-def build_html_email(username, title, link, solved, quote=None, hints=None):
+def build_html_email(username, title, difficulty, link, solved, quote=None, hints=None):
     """Builds a responsive email with optional AI hints, quotes, and a live countdown GIF."""
     
     if hints is None:
@@ -53,9 +53,20 @@ def build_html_email(username, title, link, solved, quote=None, hints=None):
     else:
         preheader_text = f"Don't forget to solve {title} today!"
         heading = f"Hey <a href='https://leetcode.com/u/{username}' target='_blank' style='text-decoration: none;'>{username}</a>, time to code!"
-        subtext = f"Today's problem, <strong>{title}</strong>, is waiting for you. Don't miss out on your streak!"
         button_text = f"Solve '{title}' Now"
-        button_color = "#000000" 
+        pill_color = {
+            "Easy": "#43AA03",    
+            "Medium": "#FFBB00", 
+            "Hard": "#f8615c"     
+        }[difficulty]
+        difficulty_badge = (
+            f"<span style='display:inline-block; padding:4px 10px; "
+            f"font-size:12px; font-weight:700; color:{pill_color}; border-radius:999px; "
+            f"background:#00000030; line-height:1; vertical-align:middle;'>"
+            f"{difficulty}</span>"
+        )
+        subtext = (f"Today's problem, <strong>{title}</strong> {difficulty_badge}, is waiting for you. "
+               f"Don't miss out on your streak!")
         footer = f"<em>“{quote}”</em>" if quote else "<em>“Small daily improvements lead to big results.” 🌱</em>"
 
         deadline_iso = get_deadline_for_potd()
@@ -160,11 +171,10 @@ def build_html_email(username, title, link, solved, quote=None, hints=None):
                                 <p style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
                                     {subtext}
                                 </p>
-                                
                                 <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                     <tr>
                                         <td align="center">
-                                            <a href="{link}" target="_blank" class="button-link" style="background-color: {button_color}; color: #ffffff; font-size: 16px; font-weight: bold; text-decoration: none; padding: 14px 22px; border-radius: 5px; display: inline-block;">
+                                            <a href="{link}" target="_blank" class="button-link" style="background-color: #000000; color: #ffffff; font-size: 16px; font-weight: bold; text-decoration: none; padding: 14px 22px; border-radius: 5px; display: inline-block;">
                                                 {button_text} &rarr;
                                             </a>
                                         </td>

@@ -1,9 +1,17 @@
 import requests
 from . import config
+from cachetools import TTLCache, cached
 
+cache = TTLCache(maxsize=1, ttl=540000)
+@cached(cache)
 def get_daily_question():
     """Fetches the title and link of the daily LeetCode question"""
     try:
+        cached_result = cache.get('daily_question')
+        if cached_result:
+            print("Fetched daily question from cache.")
+            return cached_result
+        
         response = requests.post(
             config.LEETCODE_API_URL, 
             json={'query': config.QUERY_DAILY_QUESTION}
@@ -11,6 +19,8 @@ def get_daily_question():
         response.raise_for_status()
         q_data = response.json()["data"]["activeDailyCodingChallengeQuestion"]
         q_data['fullLink'] = "https://leetcode.com" + q_data['link']
+
+        cache['daily_question'] = q_data
         return q_data
 
     except Exception as e:
