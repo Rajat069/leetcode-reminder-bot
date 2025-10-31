@@ -1,9 +1,12 @@
 import requests
 from . import config
 from cachetools import TTLCache, cached
+from apscheduler.schedulers.background import BackgroundScheduler
+from pytz import timezone
+import time
 
 cache = TTLCache(maxsize=1, ttl=540000)
-@cached(cache)
+
 def get_daily_question():
     """Fetches the title and link of the daily LeetCode question"""
     try:
@@ -40,3 +43,13 @@ def get_recent_submissions(username):
     except Exception as e:
         print(f"\n Error fetching submissions for {username}: {e}")
         return []
+
+def evict_cache():
+    """Evicts all cached data daily at 5:00 AM PST"""
+    cache.expire() 
+    print("Cache eviction run at:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+
+if __name__ == "__main__":
+    scheduler = BackgroundScheduler(timezone=timezone('US/Pacific'))
+    scheduler.add_job(evict_cache, 'cron', hour=5, minute=0)
+    scheduler.start()
