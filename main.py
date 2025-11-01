@@ -10,6 +10,7 @@ import time
 from rich.console import Console
 from rich.panel import Panel
 from rich import print as rprint
+from src.leetcode_api import setup_cache_eviction
 
 spinner_running = True
 spinner_cycle = itertools.cycle(['-', '\\', '|', '/'])
@@ -44,7 +45,10 @@ def main():
         border_style="green",
         padding=(1, 5)
     ))
-    #loading animation
+    
+    # Initialize cache eviction scheduler
+    cache_scheduler = setup_cache_eviction()
+
     with tqdm(total=100, 
                 desc="Initializing system",
                 colour='cyan',

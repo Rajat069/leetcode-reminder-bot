@@ -26,7 +26,7 @@ def get_hint_count(difficulty, acRate):
 def run_check():
     """Main logic to check submissions for each user and send emails."""
     ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
-    print(f"\n[{ist_now.strftime('%Y-%m-%d %H:%M:%S')} IST] Starting submission check...")
+    print(f"\n[{ist_now.strftime('%Y-%m-%d %I:%M:%S %p %a')} IST] Starting submission check...")
 
     # Get all question data
     question_data = leetcode_api.get_daily_question()

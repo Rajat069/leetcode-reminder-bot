@@ -67,14 +67,25 @@ def build_html_email(username, title, difficulty, link, solved, quote=None, hint
         )
         subtext = (f"Today's problem, <strong>{title}</strong> {difficulty_badge}, is waiting for you. "
                f"Don't miss out on your streak!")
-        footer = f"<em>“{quote}”</em>" if quote else "<em>“Small daily improvements lead to big results.” 🌱</em>"
+        footer = f"""
+            <table align="center" cellpadding="0" cellspacing="0" style="width:100%!important;">
+                <tr>
+                    <td align="left" style="padding:0">
+                        <img src='https://i.postimg.cc/x199H32b/Dancing-Quotemarks-Pink.gif' border='0' alt='Dancing-Quotemarks-Pink' style='width:4vh; height:4vh;'>
+                    </td>
+                    <td align="center" style="padding:0 10px 0 10px">
+                        <em>{quote if quote else "“Small daily improvements lead to big results.” 🌱"}</em>
+                    </td>
+                </tr>
+            </table>
+        """
 
         deadline_iso = get_deadline_for_potd()
         gif_url = f"https://i.countdownmail.com/4khdvf.gif?end_date_time={deadline_iso}"
                 
         timer_html = f"""
             <tr>
-                <td align="center" style="padding: 10px 0 10px 0;">
+                <td align="center" style="padding: 10px 0 0 0;">
                     <a href="{link}" target="_blank" style="text-decoration: none;">
                         <img src="{gif_url}" style="width:45%!important;" border="0" alt="Time remaining to solve"/>
                     </a>
@@ -88,8 +99,10 @@ def build_html_email(username, title, difficulty, link, solved, quote=None, hint
             hints_html = f"""
             <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin-top: 30px;">
                 <tr>
-                    <td style="background-color: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 25px;">
-                        <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #333;">💡 AI-Powered Hints</h3>
+                    <td style="background-color: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 10px 20px;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 2vh: font-weight: 600; color: #333;">
+                        <img src='https://i.postimg.cc/qvLNKYVt/Light-Solutions-blue-green-teal.gif' border='0' alt='Light-Solutions-blue-green-teal' style='width:7vh; height:7vh; vertical-align: middle;'>
+                        AI-Powered Hints</h3>
                         <ul style="margin: 0; padding-left: 20px;">
                             {hints_list_items}
                         </ul>
@@ -166,8 +179,11 @@ def build_html_email(username, title, difficulty, link, solved, quote=None, hint
                         </tr>
                         {timer_html}
                         <tr>
-                            <td class="content" style="padding: 30px 40px;">
-                                <h1 style="margin: 0 0 20px 0; font-size: 24px; font-weight: 600; color: #000; text-align: center;">{heading}</h1>
+                        <img src='https://i.postimg.cc/mkNgfX4W/Cat-playing-animation.gif' border='0' alt='Cat-playing-animation' style='width:10vh; height:9vh; display: block; margin: 0 auto;'>
+                        </tr>
+                        <tr>
+                            <td class="content" style="padding:0 40px 40px;">
+                                <h1 style="margin: 0 0 20px 0; font-size: 3vh; font-weight: 600; color: #000; text-align: center;">{heading}</h1>
                                 <p style="margin: 0 0 30px 0; font-size: 16px; line-height: 1.6;">
                                     {subtext}
                                 </p>
@@ -187,7 +203,7 @@ def build_html_email(username, title, difficulty, link, solved, quote=None, hint
                         </tr>
                         
                         <tr>
-                            <td class="content" style="padding: 0 40px 30px 40px; border-top: 1px solid #eee;">
+                            <td class="content" style="padding: 0 35px 20px 35px; border-top: 1px solid #eee;">
                                 <p style="margin: 20px 0 0 0; font-size: 14px; color: #555; text-align: left;">
                                     {footer}
                                 </p>

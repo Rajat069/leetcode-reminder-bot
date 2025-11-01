@@ -5,7 +5,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from pytz import timezone
 import time
 
-cache = TTLCache(maxsize=1, ttl=540000)
+cache = TTLCache(maxsize=1, ttl=24*60*15)
 
 def get_daily_question():
     """Fetches the title and link of the daily LeetCode question"""
@@ -45,11 +45,13 @@ def get_recent_submissions(username):
         return []
 
 def evict_cache():
-    """Evicts all cached data daily at 5:00 AM PST"""
+    """Evicts all cached data"""
     cache.expire() 
     print("Cache eviction run at:", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
-if __name__ == "__main__":
+def setup_cache_eviction():
+    """Sets up the cache eviction scheduler to run at 5:00 AM PST"""
     scheduler = BackgroundScheduler(timezone=timezone('US/Pacific'))
     scheduler.add_job(evict_cache, 'cron', hour=5, minute=0)
     scheduler.start()
+    return scheduler
