@@ -37,9 +37,9 @@ It checks whether users have solved the **Problem of the Day**, then:
 
 ## 🖼️ Gallery
 
-| Reminder Email (Unsolved) | Congratulations Email (Solved) |
+| Reminder Email (Unsolved) |  Congratulations Email (Solved) |
 |----------------------------|--------------------------------|
-| *(Screenshot coming soon)* | *(Screenshot coming soon)* |
+| <img src="assets/potd-not-solved-ss.png" alt="potd-not-solved-ss" width="70%" height="70%"> | <img src="assets/potd-solved-ss.png" alt="potd-solved" width="80%" height="70%"> |
 
 ---
 
