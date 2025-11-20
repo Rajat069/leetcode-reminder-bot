@@ -5,6 +5,8 @@ from . import leetcode_api
 from halo import Halo
 from . import email_service
 from . import gemini_service 
+import requests
+from pytz import timezone
 
 
 def get_hint_count(difficulty, acRate):
@@ -58,6 +60,8 @@ def run_check():
     for user in users:
         username, email = user["username"], user["email"]
         print(f"\n🔍 Checking user: {username}")
+
+        new_status = "pending"
         
         with Halo(text='Fetching submissions...', spinner='star2', color='cyan') as spinner:
             submissions = leetcode_api.get_recent_submissions(username)
@@ -73,6 +77,7 @@ def run_check():
         if solved_today:
             print(f"[ {username} ] has already solved the daily problem.")
             subject = "Awesome! You solved today’s LeetCode challenge!"
+            new_status = "solved"
         else:
             print(f" [ {username} ] has not solved the daily problem yet sending reminder...")
             subject = "⏳ Reminder: Solve Today’s LeetCode Problem!"
@@ -101,6 +106,8 @@ def run_check():
             hints=ai_hints,
         )
         
+        update_status(username, new_status)
+        
         with Halo(text='Sending mail..', spinner='bouncingBar', color='yellow') as spinner:
             try:
                 email_service.send_email(email, subject, html)
@@ -109,3 +116,26 @@ def run_check():
                 spinner.fail(f'Failed to send mail: {e}')
 
     print("\n--- Check complete ---")
+
+def update_status(user_id, status):
+    """Sends a PATCH request to update user status."""
+    if not config.USER_SERVICE_URL or not config.USER_SERVICE_API_KEY:
+        return
+
+    url = f"{config.USER_SERVICE_URL}/{user_id}/status"
+    headers = {
+        "X-API-Key": config.USER_SERVICE_API_KEY,
+        "Content-Type": "application/json"
+    }
+    
+    now_iso = datetime.utcnow().isoformat()
+    
+    payload = {
+        "status": status,
+        "lastChecked": now_iso
+    }
+    
+    try:
+        requests.patch(url, json=payload, headers=headers, timeout=5)
+    except Exception as e:
+        print(f"Failed to update status for {user_id}: {e}")

@@ -74,6 +74,7 @@ def load_users():
         # The bot expects a list of dicts: [{'username': '...', 'email': '...'}, ...]
         bot_users = [
             {
+                "id": user.get("id"),
                 "username": user.get("leetcodeUsername"),
                 "email": user.get("email"),
                 "reminderTimes": user.get("reminderTimes", [])
