@@ -10,3 +10,5 @@ tqdm
 cachetools
 apscheduler
 pytz
+fastapi
+uvicorn

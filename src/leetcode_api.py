@@ -39,6 +39,7 @@ def get_recent_submissions(username):
             json={'query': config.QUERY_RECENT_SUBMISSIONS, 'variables': variables}
         )
         response.raise_for_status()
+        #print("DEBUG: recent submissions response =", response.json()["data"]["recentAcSubmissionList"][0])
         return response.json()["data"]["recentAcSubmissionList"]
     except Exception as e:
         print(f"\n Error fetching submissions for {username}: {e}")

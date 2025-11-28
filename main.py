@@ -11,6 +11,9 @@ from rich.console import Console
 from rich.panel import Panel
 from rich import print as rprint
 from src.leetcode_api import setup_cache_eviction
+import uvicorn
+from src.bot_api import app
+import threading
 
 spinner_running = True
 spinner_cycle = itertools.cycle(['-', '\\', '|', '/'])
@@ -32,7 +35,7 @@ def schedule_jobs():
     for t in utc_times:
         schedule.every().day.at(t).do(run_check)
 
-def main():
+def run_scheduler():
     """Main function to start the bot."""
     global spinner_running
     console = Console()
@@ -90,4 +93,8 @@ def main():
         t.join()
 
 if __name__ == "__main__":
-    main()
+    scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
+    scheduler_thread.start()
+
+    print("🚀 Starting Bot API Server on port 8000...")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
