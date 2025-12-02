@@ -4,7 +4,7 @@ import sys
 import threading
 import itertools
 from src.core_logic import run_check
-from src.config import validate_config
+from src.config import validate_config, load_users
 from tqdm import tqdm
 import time
 from rich.console import Console
@@ -17,6 +17,7 @@ import threading
 
 spinner_running = True
 spinner_cycle = itertools.cycle(['-', '\\', '|', '/'])
+scheduled_user_times = {}  # Track scheduled times per user for comparison
 
 def spinner_thread():
     """A simple thread to show a spinning cursor in the console."""
@@ -28,12 +29,63 @@ def spinner_thread():
     sys.stdout.flush()
 
 def schedule_jobs():
-    """Sets up the scheduled times for the submission check."""
-    # Note: These times are UTC, which is standard for servers.
-    utc_times = ["03:30", "06:30", "13:30", "17:30"]
-    print(f"⏰ Scheduling jobs at the following UTC times: {', '.join(utc_times)}")
-    for t in utc_times:
-        schedule.every().day.at(t).do(run_check)
+    """Sets up per-user scheduled times from the database."""
+    global scheduled_user_times
+    users = load_users()
+    
+    if not users:
+        print(" No users found. No jobs scheduled.")
+        return
+    
+    unique_times = set()
+    new_scheduled_times = {}
+    
+    for user in users:
+        reminder_times = user.get("reminderTimes", [])
+        user_id = user['id']
+        
+        if not reminder_times:
+            print(f"⏭️  User {user['username']} has no reminder times configured.")
+            new_scheduled_times[user_id] = []
+            continue
+        
+        new_scheduled_times[user_id] = reminder_times
+        
+        for time_str in reminder_times:
+            unique_times.add(time_str)
+            # Schedule job for this time (job will handle filtering by user)
+            schedule.every().day.at(time_str).do(run_check, user_id=user_id)
+    
+    scheduled_user_times = new_scheduled_times
+    print(f"⏰ Scheduling jobs at the following UTC times: {', '.join(sorted(unique_times))}")
+    print(f"📊 Total jobs scheduled: {len(schedule.jobs)}")
+
+def reload_jobs_if_changed():
+    """Check if any user's reminder times have changed and reload jobs if needed."""
+    global scheduled_user_times
+    users = load_users()
+    
+    if not users:
+        return
+    
+    needs_reload = False
+    
+    for user in users:
+        user_id = user['id']
+        current_times = set(user.get("reminderTimes", []))
+        previous_times = set(scheduled_user_times.get(user_id, []))
+        
+        if current_times != previous_times:
+            print(f"🔄 Reminder times changed for user {user['username']}")
+            needs_reload = True
+            break
+    
+    if needs_reload:
+        print("🔄 Reloading scheduler with updated times...")
+        schedule.clear()  # Clear all existing jobs
+        schedule_jobs()   # Reschedule with new times
+    else:
+        print("✅ No timing changes detected.")
 
 def run_scheduler():
     """Main function to start the bot."""
@@ -71,6 +123,9 @@ def run_scheduler():
         print(f"\nAn error occurred during the initial run: {e}")
 
     schedule_jobs()
+    
+    schedule.every(30).minutes.do(reload_jobs_if_changed)
+    
     print("\n  Scheduler is now running. Waiting for the next scheduled time...")
     print("   (Running as a service. Press Ctrl+C to exit if running locally.)")
 

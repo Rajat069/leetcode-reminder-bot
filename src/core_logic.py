@@ -25,8 +25,13 @@ def get_hint_count(difficulty, acRate):
     return 2 # Default fallback
 
 
-def run_check():
-    """Main logic to check submissions for each user and send emails."""
+def run_check(user_id=None):
+    """Main logic to check submissions for each user and send emails.
+    
+    Args:
+        user_id (str, optional): If provided, only check this specific user.
+                                If None, check all users.
+    """
     ist_now = datetime.utcnow() + timedelta(hours=5, minutes=30)
     print(f"\n[{ist_now.strftime('%Y-%m-%d %I:%M:%S %p %a')} IST] Starting submission check...")
 
@@ -46,6 +51,13 @@ def run_check():
     if not users:
         print("No users loaded from users.json. Exiting check.")
         return
+
+    # Filter users if user_id is provided
+    if user_id:
+        users = [user for user in users if user.get('id') == user_id]
+        if not users:
+            print(f"User with ID {user_id} not found.")
+            return
 
      # Get one AI quote for everyone for this run
     with Halo(text='Fetching quote from gemini...', spinner='balloon2', color='cyan') as spinner:
