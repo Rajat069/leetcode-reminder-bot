@@ -12,10 +12,23 @@ class ReminderRequest(BaseModel):
 
 @app.post("/trigger-check")
 async def trigger_check(request: ReminderRequest, x_api_key: Optional[str] = Header(None)):
+    """
+    Trigger a manual check for a user.
+
+    Args:
+        request (ReminderRequest): Information about the user to check.
+        x_api_key (Optional[str]): The API key provided in the request header.
+
+    Returns:
+        dict: A dictionary containing the result of the check.
+
+    Raises:
+        HTTPException: If the API key is invalid or if an error occurs during the check.
+    """
     if x_api_key != os.getenv("USER_SERVICE_API_KEY"): 
         raise HTTPException(status_code=403, detail="Invalid API Key")
 
-    print(f"⚡ Manual trigger received for {request.username}")
+    print(f"Manual trigger received for {request.username}")
 
     try:
         result = core_logic.check_single_user_on_demand(request.username, request.email)
@@ -31,4 +44,10 @@ async def trigger_check(request: ReminderRequest, x_api_key: Optional[str] = Hea
 
 @app.get("/health")
 def health_check():
+    """
+    Returns a simple health check for the API.
+
+    Returns:
+        dict: A dictionary containing the status of the API.
+    """
     return {"status": "running"}

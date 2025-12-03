@@ -45,7 +45,7 @@ def run_check(user_id=None):
     q_link = question_data['fullLink']
 
     print(f"Today's POTD is '{q_details['title']}' ({q_details['difficulty']})")
-    today = ist_now.date()
+    today = datetime.now().date()
     
     users = config.load_users()
     if not users:
@@ -92,7 +92,8 @@ def update_status(user_id, status):
     
     payload = {
         "status": status,
-        "lastChecked": now_iso
+        "lastChecked": now_iso,
+        "isReminderSent" : "TRUE"
     }
     
     try:
@@ -104,16 +105,16 @@ def check_single_user(user, q_details, q_link, today, ai_quote, ai_hints):
     """Checks a single user and sends email if needed. Returns status message."""
     username, email = user["username"], user["email"]
     print(f"\n🔍 Checking user: {username}")
-
+    print(f"\n Today's date: {today}")
     new_status = "pending"
     
     with Halo(text='Fetching submissions...', spinner='star2', color='cyan') as spinner:
             submissions = leetcode_api.get_recent_submissions(username)
             spinner.succeed('Submissions fetched successfully!')
-
+    
     solved_today = any(
         sub["titleSlug"] == q_details["titleSlug"] and
-        (datetime.fromtimestamp(int(sub["timestamp"])) + timedelta(hours=5, minutes=30)).date() == today
+        (datetime.fromtimestamp(int(sub["timestamp"]))).date() == today
         for sub in submissions
     )
     
@@ -177,7 +178,7 @@ def check_single_user_on_demand(username, email):
 
     result_msg = check_single_user(
         {"username": username, "email": email, "id": None},
-        q_details, q_link, datetime.utcnow().date(), ai_quote, ai_hints
+        q_details, q_link, datetime.now().date(), ai_quote, ai_hints
     )
     
     return {"message": result_msg}
