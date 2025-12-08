@@ -21,6 +21,11 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 USER_SERVICE_URL = os.getenv("USER_SERVICE_URL", "http://localhost:8081/api/users")
 USER_SERVICE_API_KEY = os.getenv("USER_SERVICE_API_KEY")
 
+DB_HOST = os.getenv("DB_HOST")
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+DB_PORT = int(os.getenv("DB_PORT"))
 # --- GraphQL Queries ---
 QUERY_DAILY_QUESTION = """
 query questionOfToday {

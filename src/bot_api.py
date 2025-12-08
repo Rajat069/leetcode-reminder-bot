@@ -3,7 +3,6 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 from . import core_logic, config
-
 app = FastAPI()
 
 class ReminderRequest(BaseModel):

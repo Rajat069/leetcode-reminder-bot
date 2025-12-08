@@ -7,6 +7,8 @@ from . import email_service
 from . import gemini_service 
 import requests
 from pytz import timezone
+import uuid
+import psycopg2
 
 
 def get_hint_count(difficulty, acRate):
@@ -155,7 +157,9 @@ def check_single_user(user, q_details, q_link, today, ai_quote, ai_hints):
             try:
                 email_service.send_email(email, subject, html)
                 spinner.succeed(f"Mail sent successfully! to user {username}")
+                log_entry(getUserUUIDByUsername(user['username']), 'Auto', 'success', f"Email sent: {result_msg}")
             except Exception as e:
+                log_entry(getUserUUIDByUsername(user['username']), 'Auto', 'failed', f"Email failed: {e}")
                 spinner.fail(f'Failed to send mail: {e}')
 
     return result_msg
@@ -182,3 +186,74 @@ def check_single_user_on_demand(username, email):
     )
     
     return {"message": result_msg}
+
+def log_entry(user_id: str, trigger_type: str, status: str, message: str):
+    """
+    Log a history entry for a user's activity.
+    
+    Args:
+        user_id (str): The ID of the user.
+        trigger_type (str): Type of trigger (e.g., 'manual', 'scheduled').
+        status (str): Status of the check (e.g., 'success', 'failed').
+        message (str): Detailed message about the entry.
+    """
+    try:
+        conn = psycopg2.connect(
+            host=config.DB_HOST,
+            database=config.DB_NAME,
+            user=config.DB_USER,
+            password=config.DB_PASSWORD,
+            port=config.DB_PORT
+        )
+        cursor = conn.cursor()
+        
+        # Fetch user from database
+        cursor.execute(
+            "SELECT id, leetcode_username, email FROM leetcode_user WHERE id = %s",
+            (user_id,)
+        )
+        user = cursor.fetchone()
+        
+        if not user:
+            raise ValueError(f"User not found with id: {user_id}")
+        
+        user_id, username, email = user
+        
+        # Insert history entry
+        cursor.execute(
+            """INSERT INTO history_entry (id, user_id, username, email, trigger_type ,status, message)
+               VALUES (%s::uuid, %s::uuid, %s, %s, %s, %s, %s)""",
+            (str(uuid.uuid4()), str(user_id), username, email, trigger_type, status, message)
+        )
+        
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+    except Exception as e:
+        print(f"ERROR logging entry: {e}")
+        if 'conn' in locals():
+            conn.rollback()
+            conn.close()
+        raise
+
+def getUserUUIDByUsername(username):
+    try:
+        conn = psycopg2.connect(
+            host=config.DB_HOST,
+            database=config.DB_NAME,
+            user=config.DB_USER,
+            password=config.DB_PASSWORD,
+            port=config.DB_PORT
+        )
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM leetcode_user WHERE leetcode_username = %s", (username,))
+        user_id = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return str(user_id[0]) if user_id else None
+    except Exception as e:
+        print(f"ERROR logging entry: {e}")
+        if 'conn' in locals():
+            conn.close()
+        raise None   
