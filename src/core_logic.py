@@ -157,9 +157,9 @@ def check_single_user(user, q_details, q_link, today, ai_quote, ai_hints):
             try:
                 email_service.send_email(email, subject, html)
                 spinner.succeed(f"Mail sent successfully! to user {username}")
-                log_entry(getUserUUIDByUsername(user['username']), 'Auto', 'success', f"Email sent: {result_msg}")
+                log_entry(getUserUUIDByUsername(user['username']), 'Auto', 'success', f"Automated daily reminder sent at scheduled time.")
             except Exception as e:
-                log_entry(getUserUUIDByUsername(user['username']), 'Auto', 'failed', f"Email failed: {e}")
+                log_entry(getUserUUIDByUsername(user['username']), 'Auto', 'failed', f"Automated daily reminder failed at scheduled time with error message : {e}")
                 spinner.fail(f'Failed to send mail: {e}')
 
     return result_msg
@@ -238,6 +238,18 @@ def log_entry(user_id: str, trigger_type: str, status: str, message: str):
         raise
 
 def getUserUUIDByUsername(username):
+    """
+    Retrieves the UUID of a user given their LeetCode username.
+
+    Args:
+        username (str): The LeetCode username of the user.
+
+    Returns:
+        str or None: The UUID of the user if found, or None if not found.
+
+    Raises:
+        Exception: If an error occurs while connecting to the database or fetching the user.
+    """
     try:
         conn = psycopg2.connect(
             host=config.DB_HOST,
