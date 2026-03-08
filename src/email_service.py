@@ -173,13 +173,13 @@ def build_html_email(username, title, difficulty, link, solved, quote=None, hint
                     <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" class="container" style="max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; border: 1px solid #ddd;">
                         <tr>
                             <td align="center" style="padding: 20px 0 15px 0; font-size: 20px; font-weight: 600; color: #000;">
-                               <img src="https://i.postimg.cc/qRgJjC6P/Leet-Code-logo-black.png" alt="" width="20px" height="20px">
+                               <img src="https://freeimage.host/i/qImdLGV" alt="" width="20px" height="20px">
                                 LeetCode Daily Reminder
                             </td>
                         </tr>
                         {timer_html}
                         <tr>
-                        <img src='https://i.postimg.cc/mkNgfX4W/Cat-playing-animation.gif' border='0' alt='Cat-playing-animation' style='width:10vh; height:9vh; display: block; margin: 0 auto;'>
+                        <img src='https://freeimage.host/i/qIbmLG9' border='0' alt='Cat-playing-animation' style='width:10vh; height:9vh; display: block; margin: 0 auto;'>
                         </tr>
                         <tr>
                             <td class="content" style="padding:0 40px 40px;">
